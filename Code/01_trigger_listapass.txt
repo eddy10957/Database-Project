@@ -1,0 +1,10 @@
+create or replace NONEDITIONABLE TRIGGER listapass_bef_ins
+BEFORE INSERT ON listapass
+FOR EACH ROW
+declare
+  
+BEGIN
+
+:new.idpass:="PASS_SEQ".nextval;
+
+END;

@@ -1,0 +1,23 @@
+create or replace NONEDITIONABLE TRIGGER storico_bef_ins
+BEFORE INSERT ON STORICOUSCITE
+FOR EACH ROW
+declare
+ non_viaggiatore EXCEPTION;
+ temp char(1);
+BEGIN
+ :new.iduscita:=USCITA_SEQ.nextval;
+ :new.datauscita:=current_timestamp;
+ :new.viaggiatore:=upper(:new.viaggiatore);
+ :new.codcatalogo:=upper(:new.codcatalogo);
+ SELECT cacciatori.ruolo into temp
+  FROM cacciatori
+  WHERE codcacciatore =:NEW.viaggiatore;
+
+if temp not in('V','v') then
+    raise  non_viaggiatore;
+   
+end if;
+EXCEPTION
+    when non_viaggiatore then
+     Raise_Application_Error(-20000, 'Il cacciatore affidatario non è un viaggiatore');
+END;

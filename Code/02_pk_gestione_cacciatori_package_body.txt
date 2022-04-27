@@ -1,0 +1,72 @@
+create or replace NONEDITIONABLE package BODY pk_gestione_cacciatori as
+
+function genera_cod (nome in cacciatori.nome%TYPE, 
+cognome in cacciatori.cognome%type, 
+pos in number default 1) return CHAR AS
+    codice char(3);
+
+temp_nome VARCHAR2(30);
+temp_cognome VARCHAR2(30);
+
+BEGIN
+
+ temp_nome:=upper(nome);
+ temp_cognome:=upper(cognome);
+ if pos+2 < LENGTH(temp_cognome)then
+     codice:= CONCAT(SUBSTR(temp_nome,1,1),SUBSTR(temp_cognome,pos,2));
+     dbms_output.put_line('ciclo cognome'||codice|| pos);
+     return codice;
+elsif pos+2 <LENGTH(temp_nome) then
+    codice:= CONCAT(SUBSTR(temp_nome,pos,2),SUBSTR(temp_cognome,1,1));
+    dbms_output.put_line('ciclo nome'||codice || pos);
+     return codice;
+ else
+ codice:= CHR(TRUNC(dbms_random.value(65,67)))||CHR(TRUNC(dbms_random.value(65,67)))||CHR(TRUNC(dbms_random.value(65,67)));
+ return codice;
+ end if;
+
+ end;
+
+ function esiste( id_in in CACCIATORI.CODCACCIATORE%type ) return boolean as
+  ris boolean := false;
+
+begin
+  for c1 in ( select 1 from CACCIATORI where codcacciatore = id_in and rownum = 1 ) loop
+    ris := true;
+    exit;
+  end loop;
+  return( ris );
+end;
+
+PROCEDURE inserisci_valori_iniziali_cacciatori
+IS 
+ CURSOR cursore IS SELECT * FROM CACCIATORI;
+ record cursore%ROWTYPE;
+ conta number:=0;
+BEGIN
+// Data
+-- stampa tabella al video
+ OPEN cursore;
+ DBMS_OUTPUT.PUT_LINE('Tabella personale'); 
+ LOOP 
+   conta := conta + 1;
+   FETCH cursore INTO record;
+   EXIT WHEN cursore%NOTFOUND;        
+   DBMS_OUTPUT.PUT_LINE('Record n. '     || conta ||
+                        ' ID '           || record.codcacciatore ||
+                        ' nome '         || record.nome  ||
+                        ' cognome '      || record.cognome  ||
+                        ' numero telefono: ' || record.telefono  ||
+                        ' ruolo '   || record.ruolo ); 
+ END LOOP; 
+ CLOSE cursore; 
+END;
+
+
+
+
+
+
+
+
+end pk_gestione_cacciatori;

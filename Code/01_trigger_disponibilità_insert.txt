@@ -1,0 +1,11 @@
+create or replace NONEDITIONABLE TRIGGER disponibilita_bef_ins
+BEFORE INSERT ON DISPONIBILITA
+FOR EACH ROW
+declare
+  
+BEGIN
+
+:new.id_disponibilita:="DISPONIBILITÀ_SEQ".nextval;
+:new.cacciatore:=upper(:new.cacciatore);
+
+END;

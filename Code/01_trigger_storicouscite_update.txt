@@ -1,0 +1,24 @@
+CREATE OR REPLACE TRIGGER vincoli_storicouscite_update
+   BEFORE UPDATE ON storicouscite
+   FOR EACH ROW
+   WHEN (NEW.viaggiatore<>OLD.viaggiatore)
+DECLARE
+
+-- gestione eccezioni
+   non_viaggiatore EXCEPTION;
+    temp char(1);
+BEGIN
+SELECT cacciatori.ruolo into temp
+  FROM cacciatori
+  WHERE codcacciatore =:NEW.viaggiatore;
+  
+if temp not in('V','v') then
+    raise  non_viaggiatore;
+end if;
+:NEW.viaggiatore:=upper(:NEW.viaggiatore);
+--   inserimento corretto
+     DBMS_OUTPUT.PUT_LINE('Assegnazione corretta al viaggiatore ' || :NEW.viaggiatore);
+EXCEPTION
+    when non_viaggiatore then
+     Raise_Application_Error(-20000, 'Il cacciatore affidatario non è un viaggiatore');
+END;

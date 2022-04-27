@@ -1,0 +1,26 @@
+set serverout on;
+
+exec pk_gestione_cacciatori.inserisci_valori_iniziali_cacciatori;
+
+exec pk_gestione_listapass.inserisci_valori_iniziali;
+
+
+
+---inserimenti nelle disponibilità
+insert into disponibilita (cacciatore,oggetto) values ('ETR','1');
+insert into disponibilita (cacciatore,oggetto) values ('ETR','2');
+insert into disponibilita (cacciatore,oggetto) values ('ETR','2');
+insert into disponibilita (cacciatore,oggetto) values ('ETR','14');
+insert into disponibilita (cacciatore,oggetto) values ('ETR','15');
+insert into disponibilita (cacciatore,oggetto) values ('VMA','3');
+insert into disponibilita (cacciatore,oggetto) values ('ETR','45');
+insert into disponibilita (cacciatore,oggetto) values ('ETR','44');
+insert into disponibilita (cacciatore,oggetto) values ('ETR','34');
+
+---inserimenti in magazzino dalle disponibilità
+insert into magazzino(ID_DISPONIBILITÀ) values (3);
+insert into magazzino(ID_DISPONIBILITÀ) values (4);
+insert into magazzino(ID_DISPONIBILITÀ) values (7);
+
+----inserimenti in storico uscite
+insert into storicouscite(codcatalogo,indizio,viaggiatore) values ('2ETR','1','MCU');

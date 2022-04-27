@@ -1,0 +1,18 @@
+create or replace NONEDITIONABLE TRIGGER cacciatore_bef_ins
+BEFORE INSERT ON CACCIATORI
+FOR EACH ROW
+DECLARE
+
+temp char(3);
+pos number :=1;
+BEGIN
+temp:=pk_gestione_cacciatori.genera_cod(:new.nome,:new.cognome,pos);
+WHILE pk_gestione_cacciatori.esiste(temp)= true
+LOOP
+
+    dbms_output.put_line('while'||temp || pos);
+    temp:=pk_gestione_cacciatori.genera_cod(:new.nome,:new.cognome,pos);
+    pos:=pos+1;
+END LOOP;
+:new.codcacciatore:=temp;
+END;

@@ -1,0 +1,8 @@
+create or replace NONEDITIONABLE package pk_gestione_magazzino 
+is
+function genera_catalogo (proprietario in disponibilita.cacciatore%TYPE, 
+oggetto in disponibilita.oggetto%type) return VARCHAR2 ;
+--***********************************
+function esiste_mag( id_in in magazzino.CODCATALOGO%type ) return boolean ;
+
+end pk_gestione_magazzino;

@@ -1,0 +1,14 @@
+create or replace NONEDITIONABLE package pk_gestione_cacciatori 
+is
+
+--**************************************************
+PROCEDURE inserisci_valori_iniziali;
+--**************************************************
+
+function genera_cod (nome in cacciatori.nome%TYPE, 
+cognome in cacciatori.cognome%type, 
+pos in number default 1) return CHAR ;
+--***********************************
+function esiste( id_in in CACCIATORI.CODCACCIATORE%type ) return boolean ;
+
+end pk_gestione_cacciatori;

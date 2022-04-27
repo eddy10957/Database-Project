@@ -1,0 +1,34 @@
+create or replace NONEDITIONABLE TRIGGER magazzino_bef_ins
+BEFORE INSERT ON MAGAZZINO
+FOR EACH ROW
+declare
+  tempcodice varchar2(8);
+  tempogg disponibilita.oggetto%TYPE;
+  tempcacc disponibilita.cacciatore%TYPE;
+BEGIN
+
+  SELECT disponibilita.oggetto into tempogg
+  FROM DISPONIBILITA
+  WHERE ID_DISPONIBILITA = :NEW.id_disponibilità;
+
+  SELECT disponibilita.cacciatore
+    into tempcacc
+  FROM DISPONIBILITA
+  WHERE ID_DISPONIBILITA = :NEW.id_disponibilità;
+
+  :new.codcatalogo := pk_gestione_magazzino.genera_catalogo(tempcacc,tempogg);
+  if tempogg <= 50 then
+  :new.scaffale :=1;
+  elsif tempogg <=100 then
+  :new.scaffale :=2;
+  elsif tempogg <=150 then
+  :new.scaffale :=3;
+  elsif tempogg <200 then
+  :new.scaffale :=4;
+  elsif tempogg <250 then
+  :new.scaffale :=5;
+  else
+  :new.scaffale:=6;
+  end if;
+  
+END;

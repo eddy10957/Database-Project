@@ -1,0 +1,90 @@
+CREATE TABLE CACCIATORI(
+  CodCacciatore character(3),
+  Nome          varchar(30)  NOT NULL,
+  Cognome       varchar(30)  NOT NULL,
+  Telefono      varchar(15)  NOT NULL,
+  Ruolo         character(1) NOT NULL,
+  constraint    chiave_CACCIATORI  primary key(CodCacciatore),
+  constraint    ctrl_Ruolo  check (Ruolo in( 'M','m','V','v'))
+);
+
+CREATE TABLE LISTAPASS(
+  IdPass        int,
+  Pass           varchar(60)  not null,
+  constraint     chiave_LISTAPASS     primary key(IdPass)
+);
+
+CREATE SEQUENCE pass_seq MINVALUE 1 START WITH 1 NOCACHE; 
+
+CREATE TABLE MAGAZZINO(
+  CodCatalogo    varchar(8),
+  Scaffale        int not null,
+  disponibilità   int not null,
+  proprietario    character(3) NOT NULL,
+  oggetto        int not null,
+
+  constraint    chiave_MAGAZZINO primary key(CodCatalogo)
+);
+
+CREATE TABLE STORICOUSCITE(
+  IdUscita      int,
+  indizio       int not null,
+  DataUscita    timestamp,
+  Viaggiatore   character(3) not null,
+  CodCatalogo   varchar(8) not null,
+  constraint    chiave_STORICOUSCITE     primary key(IdUscita)
+);
+
+CREATE SEQUENCE storico_seq MINVALUE 1 START WITH 1 NOCACHE;
+
+
+CREATE TABLE DISPONIBILITA(
+    ID_DISPONIBILITA INT,
+    CACCIATORE Character(3) NOT NULL,
+    OGGETTO INT NOT NULL,
+    constraint chiave_disponibilita primary key(ID_DISPONIBILITA,CACCIATORE,OGGETTO)
+    );
+
+CREATE SEQUENCE disponibilità_seq MINVALUE 1 START WITH 1 NOCACHE;
+
+
+
+alter table STORICOUSCITE add constraint forkey_STORICOUSCITE_CACCIATORI
+            foreign key (Viaggiatore) references CACCIATORI (CodCacciatore);
+            
+alter table STORICOUSCITE add constraint forkey_STORICOUSCITE_MAGAZZINO
+            foreign key (CodCatalogo) references MAGAZZINO (CodCatalogo) ;
+            
+alter table DISPONIBILITA add constraint forkey_DISPONIBILITA_CACCIATORI
+            foreign key (Cacciatore) references CACCIATORI (CodCacciatore) ;
+            
+alter table DISPONIBILITA add constraint forkey_DISPONIBILITA_LISTAPASS
+            foreign key (Oggetto) references LISTAPASS (IdPass) ; 
+            
+alter table MAGAZZINO add constraint forkey_MAGAZZINO_DISPONIBILITA
+            foreign key (disponibilità,proprietario,oggetto) references DISPONIBILITA (ID_DISPONIBILITA,cacciatore,oggetto) ; 
+
+
+--- view per gli oggetti attesi da catalogare 
+
+create view da_catalogare as
+select c.nome NOME , c.cognome COGNOME , c.codcacciatore MATRICOLA , c.telefono TELEFONO, l.pass OGGETTO, d.id_disponibilita ID
+from cacciatori c, disponibilita d , listapass l 
+where ( c.codcacciatore=d.cacciatore and l.idpass = d.oggetto)
+order by c.nome , c.cognome;
+
+---- view magazzino
+
+ CREATE  VIEW REPORT_MAGAZZINO AS 
+  select c.nome NOME , c.cognome COGNOME , l.pass OGGETTO , m.codcatalogo CATALOGO , m.scaffale SCAFFALE
+from cacciatori c, disponibilita d , listapass l , magazzino m
+where ( m.id_disponibilità=d.id_disponibilita and c.codcacciatore=d.cacciatore and l.idpass = d.oggetto)
+order by m.codcatalogo;
+
+--- view delle uscite ordinate per indizio
+
+create view uscite as
+select s.indizio Indizio, s.datauscita DATA , l.pass OGGETTO , s.codcatalogo CATALOGO, c.nome  ||' '|| c.cognome VIAGGIATORE 
+from cacciatori c, disponibilita d , listapass l , magazzino m, storicouscite s
+where ( s.codcatalogo=m.codcatalogo and s.viaggiatore=c.codcacciatore AND m.id_disponibilità= d.id_disponibilita AND d.oggetto=l.idpass)
+order by S.indizio;

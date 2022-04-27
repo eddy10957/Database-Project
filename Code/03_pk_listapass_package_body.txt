@@ -1,0 +1,35 @@
+create or replace NONEDITIONABLE package BODY pk_listapass as
+
+
+
+
+PROCEDURE inserisci_valori_iniziali
+IS 
+ CURSOR cursore IS SELECT * FROM listapass;
+ record cursore%ROWTYPE;
+ conta number:=0;
+BEGIN
+//DATA
+
+-- stampa tabella al video
+ OPEN cursore;
+ DBMS_OUTPUT.PUT_LINE('Tabella oggetti'); 
+ LOOP 
+   conta := conta + 1;
+   FETCH cursore INTO record;
+   EXIT WHEN cursore%NOTFOUND;        
+   DBMS_OUTPUT.PUT_LINE('Record n. '     || conta ||
+                        ' ID '           || record.idpass ||
+                        ' oggetto '         || record.pass  ); 
+ END LOOP; 
+ CLOSE cursore; 
+END;
+
+
+
+
+
+
+
+
+end pk_listapass;

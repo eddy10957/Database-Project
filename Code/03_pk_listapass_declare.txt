@@ -1,0 +1,7 @@
+create or replace NONEDITIONABLE package pk_listapass 
+is
+
+PROCEDURE inserisci_valori_iniziali;
+
+-- ********************************************************
+end pk_listapass;

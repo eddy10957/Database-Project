@@ -1,0 +1,32 @@
+create or replace NONEDITIONABLE package BODY pk_gestione_magazzino as
+
+
+
+ function esiste_mag( id_in in magazzino.CODCATALOGO%type ) return boolean as
+  ris boolean := false;
+
+begin
+  for c1 in ( select 1 from magazzino where codcatalogo = id_in and rownum = 1 ) loop
+    ris := true;
+    exit;
+  end loop;
+  return( ris );
+end;
+
+function genera_catalogo (proprietario in disponibilita.cacciatore%TYPE, 
+oggetto in disponibilita.oggetto%type) return VARCHAR2 as
+    codice varchar2(8);
+
+temp_number int :=1;
+BEGIN
+codice:= oggetto||proprietario;
+while esiste_mag(codice)=true
+LOOP
+ codice:= oggetto||proprietario||temp_number;
+ temp_number:= temp_number+1;
+ end loop;
+return codice;
+end;
+
+
+end pk_gestione_magazzino;
